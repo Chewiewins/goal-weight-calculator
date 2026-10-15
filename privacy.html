@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="color-scheme" content="light dark"><meta name="theme-color" content="#111827">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="icon" type="image/png" href="icon-192.png">
+<title>Privacy – Goal Weight Calculator</title>
+<style>
+:root{--blue:#007BFF;--cyan:#22d3ee;--bg1:#f1f5f9;--bg2:#fff;--card:#fff;--text:#1e293b;--muted:#64748b;--border:#e2e8f0}
+html.dark{--bg1:#111827;--bg2:#000;--card:#1f2937;--text:#e2e8f0;--muted:#cbd5e1;--border:#374151}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Google Sans Text','Google Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:15px;line-height:1.55;color:var(--text);background:linear-gradient(135deg,var(--bg1),var(--bg2));min-height:100vh;padding:16px}
+.wrap{max-width:640px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 20px}
+h1{font-size:22px;margin:0 0 4px;background:linear-gradient(90deg,var(--cyan),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:16px;margin:18px 0 4px}
+a{color:var(--blue)}ul{padding-left:20px}
+.back{display:inline-block;margin-bottom:12px}
+.foot{text-align:center;color:var(--muted);font-size:13px;margin:24px 0 8px}
+</style></head><body>
+<div class="wrap">
+<a class="back" href="index.html">← Calculator</a>
+<div class="card">
+<h1>Privacy</h1>
+<p style="color:var(--muted);margin-top:0">Last updated: 15 October 2026</p>
+<p><b>Short version: we collect nothing.</b> Goal Weight Calculator has no accounts, no ads, no analytics and no tracking.</p>
+<h2>Your data stays on your device</h2>
+<ul>
+<li>All calculations happen in your browser. Nothing you type (age, weight, height, goals and so on) is sent to any server.</li>
+<li>Settings, theme choice and any tracker entries in the Advanced version are saved only in your browser's <code>localStorage</code> on this device.</li>
+<li>Clearing your browser or site data, or uninstalling the app, deletes them. They are not backed up anywhere, and we cannot recover them.</li>
+</ul>
+<h2>Offline use</h2>
+<p>When you install the app, a service worker saves a copy of the app's own pages in your browser so it works without a connection. It stores only the app files, not your personal data.</p>
+<h2>External links</h2>
+<p>The Ko-fi link, the crypto donation addresses and the @ChewieWins link on X are external. If you follow them, those services' own privacy policies apply. Donation is entirely optional.</p>
+<h2>Health note</h2>
+<p>This tool gives general estimates, not medical advice. Talk to a health professional before making big changes to your diet.</p>
+<h2>Contact</h2>
+<p>Questions? Message <a href="https://x.com/ChewieWins" target="_blank" rel="noopener">@ChewieWins</a> on X.</p>
+</div>
+<footer class="foot">Made by <a href="https://x.com/ChewieWins" target="_blank" rel="noopener">@ChewieWins</a> · <a href="privacy.html">Privacy</a></footer>
+</div>
+<script>try{var t=localStorage.getItem('theme')||'auto';var d=t==='dark'||(t==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}</script>
+</body></html>
