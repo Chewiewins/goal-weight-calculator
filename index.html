@@ -55,6 +55,9 @@ a{color:var(--blue)}
 .tl a{font-weight:600;text-decoration:none;margin-right:12px;white-space:nowrap}.modal{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:50;display:flex;flex-direction:column;padding:10px}.modal .mh{display:flex;justify-content:flex-end;padding-bottom:6px}.modal iframe{flex:1;border:0;border-radius:10px;background:#fff;width:100%}.modal button{border:0;border-radius:8px;padding:8px 14px;background:var(--blue);color:#fff;font-weight:700;cursor:pointer}
 .foot{text-align:center;color:var(--muted);font-size:13px;margin:24px 0 8px}
 @media(max-width:640px){h1{font-size:1.6rem}.row{grid-template-columns:1fr}.row .d{border-left:0;border-top:1px solid var(--border)}.row.h .d{display:none}.grid2{grid-template-columns:1fr}.result .big{font-size:2.4rem}.card{padding:18px}}
+.hist{width:100%;border-collapse:collapse;margin-top:8px}.hist td,.hist th{padding:6px;border-bottom:1px solid var(--border);text-align:left}
+#printReport{display:none}
+@media print{body{background:#fff!important;color:#000}body>*{display:none!important}#printReport{display:block!important;font:13px/1.5 system-ui,sans-serif;color:#000;padding:10mm}#printReport h1{font-size:20px;margin:0 0 6px}#printReport table{border-collapse:collapse;width:100%}#printReport td{border-bottom:1px solid #ccc;padding:4px 6px}@page{size:A4;margin:12mm}}
 </style>
 </head>
 <body>
@@ -79,6 +82,7 @@ a{color:var(--blue)}
  <div class="row h"><div class="l" style="grid-column:span 2">Calorie Budget Calculator</div><div class="d">Information</div></div>
  <div class="row"><div class="l">Your current weight</div><div class="val" id="wDisp" style="font-size:1.05rem">Enter above</div><div class="d">Taken from Step 1.</div></div>
  <div class="row"><div class="l">Sex</div><div><select id="sex"><option value="m">Male</option><option value="f">Female</option></select></div><div class="d">Used for BMR (Mifflin-St Jeor) and the minimum-intake safety warning.</div></div>
+ <div class="row"><div class="l">Height units</div><div><div class="seg" id="hunits" style="margin:0;max-width:200px"><button data-h="cm" class="on">cm</button><button data-h="ftin">ft/in</button></div></div><div class="d">Enter height in centimetres or feet and inches.</div></div>
  <div class="row" id="hCmRow"><div class="l">Your height in CMs</div><div><input id="hcm" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g., 178"></div><div class="d">Enter your height in CMs.</div></div>
  <div class="row" id="hFtRow" style="display:none"><div class="l">Your height</div><div style="display:flex;gap:6px;align-items:center"><input id="hft" type="text" inputmode="decimal" autocomplete="off" placeholder="5">'<input id="hin" type="text" inputmode="decimal" autocomplete="off" placeholder="10">"</div><div class="d">Feet and inches.</div></div>
  <div class="row"><div class="l">Current Age</div><div><input id="age" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g., 42"></div><div class="d">Enter your current age.</div></div>
@@ -114,6 +118,16 @@ a{color:var(--blue)}
 <div id="protOut"></div>
 </section>
 
+<section id="reportSec">
+<h2 class="grad">Save PDF / Share &amp; History</h2>
+<p class="sub" style="font-size:15px">Everything stays on this device. No account, no server, no tracking.</p>
+<div class="btns"><button class="btn" id="pdfBtn">Save PDF / Share</button><button class="btn sec" id="printBtn">Print</button></div>
+<div id="pdfMsg" class="n" style="color:var(--muted);font-size:13px;margin-top:8px"></div>
+<p style="font-size:14px;margin:14px 0 6px">Your personal code: <strong id="pcode"></strong> <span style="color:var(--muted);font-size:13px">(stored only on this device, printed on your PDF)</span></p>
+<div id="histTrend"></div><div id="histList" style="font-size:14px"></div>
+<button class="btn sec" id="clearHist" style="margin-top:10px">Clear history</button>
+</section>
+<div id="printReport"></div>
 <section id="donate">
 <h2 class="grad">Support / Donate</h2>
 <p class="sub kofi-line" style="font-size:15px">Free to use, always. Tips are completely optional and always appreciated.</p>
@@ -159,7 +173,10 @@ const CU=()=>unit==='st'?'lbs':unit;
 function W(){if(unit!=='st')return num('w');const s=num('wst'),l=num('w');if(isNaN(s)&&isNaN(l))return NaN;return (s||0)*14+(l||0);}
 function fw(x){return unit==='st'?fmtSt(x):`${x.toFixed(1)} ${unit}`;}
 function seg(id,attr,cb){$(id).querySelectorAll('button').forEach(b=>b.onclick=()=>{$(id).querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));cb(b.dataset[attr]);});}
-seg('units','u',u=>{unit=u;document.querySelectorAll('.u').forEach(s=>s.textContent=u==='st'?'lb':u);$('wstWrap').style.display=u==='st'?'':'none';$('w').placeholder=u==='st'?'e.g., 8':'e.g., 80';$('hCmRow').style.display=u==='kg'?'':'none';$('hFtRow').style.display=u==='kg'?'none':'';calcGoal(true);});
+seg('units','u',u=>{unit=u;document.querySelectorAll('.u').forEach(s=>s.textContent=u==='st'?'lb':u);$('wstWrap').style.display=u==='st'?'':'none';$('w').placeholder=u==='st'?'e.g., 8':'e.g., 80';calcGoal(true);});
+var hunit='cm';try{hunit=localStorage.getItem('hunit')==='ftin'?'ftin':'cm';}catch(e){}
+function setHU(h){hunit=h;try{localStorage.setItem('hunit',h);}catch(e){}$('hunits').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.h===h));$('hCmRow').style.display=h==='cm'?'':'none';$('hFtRow').style.display=h==='cm'?'none':'';}
+$('hunits').querySelectorAll('button').forEach(b=>b.onclick=()=>{var c=heightCm();setHU(b.dataset.h);if(c>0){if(hunit==='cm')$('hcm').value=Math.round(c);else{var t=Math.round(c/2.54);$('hft').value=Math.floor(t/12);$('hin').value=t%12;}}update();});
 var tMode='weeks',twk=12,lastD=null,lastT=null;
 function ymd(d){var m=d.getMonth()+1,x=d.getDate();return d.getFullYear()+'-'+(m<10?'0':'')+m+'-'+(x<10?'0':'')+x;}
 function today0(){var n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate());}
@@ -193,7 +210,7 @@ function setupSlider(){
 function presets(list){$('presets').innerHTML='';list.forEach(([v,t])=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>setDef(v);$('presets').appendChild(b);});}
 function setDef(v){v=Math.max(0,Math.min(+$('dNum').max,+v||0));if(mode==='kcal')defKcal=v;else defPct=v;$('dRange').value=$('dNum').value=v;update();}
 $('dRange').oninput=e=>setDef(e.target.value);$('dNum').oninput=e=>setDef(e.target.value);
-function heightCm(){return unit==='kg'?num('hcm'):num('hft')*30.48+(num('hin')||0)*2.54;}
+function heightCm(){return hunit==='cm'?num('hcm'):num('hft')*30.48+(num('hin')||0)*2.54;}
 function fmtDate(d){return d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'});}
 function update(){
   const w=W(),sex=$('sex').value;
@@ -257,14 +274,14 @@ function calcGoal(live){
     <p class="disc"><strong>Disclaimer:</strong> This assumes your deficit, diet, training and TDEE stay consistent. It does not factor in illness, plateaus, holidays, injury, stress, poor sleep or health conditions. Allow extra time for real life.</p>`;}
   update();
 }
-$('calcGoal').onclick=function(){calcGoal(false);};
+$('calcGoal').onclick=function(){calcGoal(false);if(goal)saveHist();};
 ['w','wst','bf','gbf'].forEach(function(id){$(id).addEventListener('input',function(){calcGoal(true);});});
 const _u=update;update=function(){_u();const t=$('tf2');if(t)t.textContent=$('time').textContent;};
 $('reset').onclick=()=>{['w','wst','bf','gbf'].forEach(id=>$(id).value='');goal=null;$('goalOut').innerHTML=$('goalErr').innerHTML=$('protOut').innerHTML='';update();};
 $('calcProt').onclick=()=>{const w=W(),bf=num('bf');
   if(!(w>0&&bf>0&&bf<100)){$('protOut').innerHTML='<div class="err">Please enter a valid weight and current body fat % first.</div>';return;}
   const [a,b]=protein(w,bf,CU());$('protOut').innerHTML=`<div class="result"><div>Recommended Daily Protein</div><div class="big" style="font-size:2.4rem">${a.toFixed(0)}g - ${b.toFixed(0)}g</div><small>Ideal for muscle maintenance based on your current lean mass.</small></div>`;};
-setupSlider();update();
+setupSlider();setHU(hunit);update();
 </script>
 <script>
 document.querySelectorAll('.dtab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.dtab').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.dpane').forEach(p=>p.hidden=p.id!=='d-'+b.dataset.t);});
@@ -279,6 +296,59 @@ var a=document.getElementById('guideLink');
 a.addEventListener('click',function(ev){if(/^https?:$/.test(location.protocol))return;ev.preventDefault();var w=null;
  try{var u=URL.createObjectURL(new Blob([GUIDE_HTML],{type:'text/html'}));w=window.open(u,'_blank');}catch(e){w=null;}
  if(!w)modal();});
+})();
+</script>
+<script>
+/* Report, PDF/share and on-device history. No network use. */
+(function(){
+var HK='gwHistory',CK='gwCode';
+function esc(t){return String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function code(){var c=null;try{c=localStorage.getItem(CK);}catch(e){}
+ if(!c){var a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',r=new Uint8Array(6);(window.crypto||{getRandomValues:x=>x.map(()=>Math.random()*256)}).getRandomValues(r);c='CW-';for(var i=0;i<6;i++)c+=a[r[i]%a.length];try{localStorage.setItem(CK,c);}catch(e){}}return c;}
+function hist(){try{return JSON.parse(localStorage.getItem(HK)||'[]');}catch(e){return [];}}
+function txt(id){var e=$(id);return e?e.textContent.trim():'';}
+function heightTxt(){var c=heightCm();if(!(c>0))return '–';var t=Math.round(c/2.54);return Math.round(c)+' cm ('+Math.floor(t/12)+"' "+(t%12)+'")';}
+function data(){var w=W(),kg=CU()==='lbs'?w*KG_PER_LB:w;
+ return {date:new Date().toISOString(),unit:unit,weight:w>0?fw(w):'–',kg:kg>0?+kg.toFixed(2):null,
+  bf:txtv('bf'),gbf:txtv('gbf'),goal:goal?fw(goal):'–',goalKg:goal?+(CU()==='lbs'?goal*KG_PER_LB:goal).toFixed(2):null,
+  sex:$('sex').value==='f'?'Female':'Male',height:heightTxt(),age:txtv('age'),act:$('act').value,
+  tdee:txt('tdee'),target:txt('target'),rate:txt('rate'),time:txt('time'),eta:txt('date'),protein:($('protOut').querySelector('.big')||{}).textContent||'–'};}
+function txtv(id){var v=num(id);return isNaN(v)?'–':String(v);}
+window.saveHist=function(){var h=hist(),d=data(),l=h[h.length-1];if(l&&l.weight===d.weight&&l.bf===d.bf&&l.gbf===d.gbf&&l.goal===d.goal&&l.target===d.target&&l.date.slice(0,10)===d.date.slice(0,10)){render();return;}h.push(d);if(h.length>200)h=h.slice(-200);try{localStorage.setItem(HK,JSON.stringify(h));}catch(e){}render();};
+function fd(s){return new Date(s).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'});}
+function render(){var h=hist();$('pcode').textContent=code();
+ if(!h.length){$('histList').innerHTML='<p style="color:var(--muted)">No saved calculations yet. Each time you press “Calculate Goal Weight” it is saved here.</p>';$('histTrend').innerHTML='';$('clearHist').style.display='none';return;}
+ $('clearHist').style.display='';
+ var pts=h.filter(x=>x.kg>0);
+ if(pts.length>1){var ws=pts.map(x=>x.kg),mn=Math.min.apply(0,ws),mx=Math.max.apply(0,ws),rg=(mx-mn)||1,W2=300,H=70;
+  var p=pts.map((x,i)=>(10+i*(W2-20)/(pts.length-1)).toFixed(1)+','+(H-8-(x.kg-mn)/rg*(H-16)).toFixed(1)).join(' ');
+  var dlt=ws[ws.length-1]-ws[0];
+  $('histTrend').innerHTML='<svg viewBox="0 0 '+W2+' '+H+'" style="width:100%;max-width:420px;height:auto" role="img" aria-label="Weight trend"><polyline fill="none" stroke="currentColor" stroke-width="2" points="'+p+'"/></svg><div style="font-size:14px">Trend: '+(dlt<=0?'▼ ':'▲ ')+Math.abs(dlt).toFixed(1)+' kg ('+(Math.abs(dlt)*2.20462).toFixed(1)+' lbs) over '+pts.length+' entries</div>';}
+ else $('histTrend').innerHTML='<div style="font-size:14px;color:var(--muted)">Save two or more calculations to see your trend.</div>';
+ $('histList').innerHTML='<table class="hist"><tr><th>Date</th><th>Weight</th><th>BF%</th><th>Goal</th><th>Target</th></tr>'+h.slice().reverse().slice(0,20).map(x=>'<tr><td>'+esc(fd(x.date))+'</td><td>'+esc(x.weight)+'</td><td>'+esc(x.bf)+' → '+esc(x.gbf)+'</td><td>'+esc(x.goal)+'</td><td>'+esc(x.target)+'</td></tr>').join('')+'</table>';}
+$('clearHist').onclick=function(){if(confirm('Clear all saved history on this device?')){try{localStorage.removeItem(HK);}catch(e){}render();}};
+function lines(){var d=data(),h=hist();var L=[['Goal Weight Calculator - Personal Report',16],['Date: '+fd(d.date)+'    Personal code: '+code(),11],['',8],['INPUTS',12],
+ ['Current weight: '+d.weight,11],['Current body fat: '+d.bf+'%    Goal body fat: '+d.gbf+'%',11],['Sex: '+d.sex+'    Height: '+d.height+'    Age: '+d.age+'    Activity: '+d.act,11],['',8],['RESULTS',12],
+ ['Goal weight: '+d.goal,11],['Maintenance (TDEE): '+d.tdee,11],['Daily calorie target: '+d.target,11],['Weekly loss rate: '+d.rate,11],['Time to goal: '+d.time+'  '+d.eta,11],['Daily protein: '+d.protein,11]];
+ if(h.length){L.push(['',8],['RECENT HISTORY',12]);h.slice(-8).reverse().forEach(x=>L.push([fd(x.date)+':  '+x.weight+',  BF '+x.bf+'% -> '+x.gbf+'%,  goal '+x.goal,10]));}
+ L.push(['',8],['Estimates only, not medical advice. Generated on-device; no data was sent anywhere.',9],['Made by @ChewieWins',12]);return L;}
+function ascii(t){return String(t).replace(/[–—]/g,'-').replace(/[→]/g,'->').replace(/[≈~]/g,'~').replace(/[’‘]/g,"'").replace(/[“”]/g,'"').replace(/·/g,'-').replace(/[^\x20-\x7e]/g,'').replace(/([\\()])/g,'\\$1');}
+function makePdf(){var y=800,ops='BT\n';lines().forEach(function(l){y-=l[1]+7;ops+='/F'+(l[1]>=12?'2':'1')+' '+l[1]+' Tf 1 0 0 1 50 '+y+' Tm ('+ascii(l[0])+') Tj\n';});ops+='ET';
+ var o=['<< /Type /Catalog /Pages 2 0 R >>','<< /Type /Pages /Kids [3 0 R] /Count 1 >>','<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>',
+  '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>','<< /Length '+ops.length+' >>\nstream\n'+ops+'\nendstream'];
+ var s='%PDF-1.4\n',x=[];o.forEach(function(b,i){x.push(s.length);s+=(i+1)+' 0 obj\n'+b+'\nendobj\n';});
+ var xr=s.length;s+='xref\n0 '+(o.length+1)+'\n0000000000 65535 f \n'+x.map(n=>('000000000'+n).slice(-10)+' 00000 n \n').join('')+'trailer\n<< /Size '+(o.length+1)+' /Root 1 0 R >>\nstartxref\n'+xr+'\n%%EOF';
+ return new Blob([s],{type:'application/pdf'});}
+window.gwMakePdf=makePdf;
+function fillPrint(){$('printReport').innerHTML=lines().map(function(l){return l[0]?(l[1]>=16?'<h1>'+esc(l[0])+'</h1>':l[1]===12?'<p style="font-weight:700;margin:10px 0 2px">'+esc(l[0])+'</p>':'<div>'+esc(l[0])+'</div>'):'';}).join('');}
+$('printBtn').onclick=function(){fillPrint();window.print();};
+$('pdfBtn').onclick=async function(){if(!goal){calcGoal(false);if(!goal){$('pdfMsg').textContent='Complete Step 1 first, then save your report.';return;}}
+ saveHist();var blob=makePdf(),name='goal-weight-report-'+new Date().toISOString().slice(0,10)+'.pdf';
+ try{var f=new File([blob],name,{type:'application/pdf'});
+  if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'My goal weight report',text:'My goal weight report - made by @ChewieWins'});$('pdfMsg').textContent='Shared.';return;}}catch(e){if(e&&e.name==='AbortError'){$('pdfMsg').textContent='Share cancelled.';return;}}
+ var a=document.createElement('a'),u=URL.createObjectURL(blob);a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);$('pdfMsg').textContent='PDF saved to your downloads.';};
+document.body.appendChild($('printReport'));window.addEventListener('beforeprint',fillPrint);
+render();
 })();
 </script>
 <script>
