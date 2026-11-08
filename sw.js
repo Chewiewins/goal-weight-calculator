@@ -1,8 +1,8 @@
 /* Goal Weight Calculator service worker: cache-first, versioned. Bump VERSION on each release. */
-var VERSION = 'v2';
+var VERSION = 'v3';
 var CACHE = 'goal-weight-' + VERSION;
 var ASSETS = ['./', 'index.html', 'advanced.html', 'guide.html', 'privacy.html',
-  'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png'];
+  'manifest.webmanifest', 'bodyfat-women.jpg', 'bodyfat-men.jpg', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png'];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(ASSETS); }).then(function () { return self.skipWaiting(); }));
 });
