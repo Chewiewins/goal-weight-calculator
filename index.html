@@ -58,6 +58,18 @@ a{color:var(--blue)}
 .hist{width:100%;border-collapse:collapse;margin-top:8px}.hist td,.hist th{padding:6px;border-bottom:1px solid var(--border);text-align:left}
 #printReport{display:none}
 @media print{body{background:#fff!important;color:#000}body>*{display:none!important}#printReport{display:block!important;font:13px/1.5 system-ui,sans-serif;color:#000;padding:10mm}#printReport h1{font-size:20px;margin:0 0 6px}#printReport table{border-collapse:collapse;width:100%}#printReport td{border-bottom:1px solid #ccc;padding:4px 6px}@page{size:A4;margin:12mm}}
+
+/* Visual body-fat guide (illustrative) */
+.bfg{border:1px solid var(--border);border-radius:10px;margin-top:8px;overflow:hidden}
+.bfg summary{cursor:pointer;padding:10px 12px;font-size:13px;font-weight:600;color:var(--cyan);list-style:none;user-select:none}
+.bfg summary::after{content:' \25BE';float:right;color:var(--muted)}
+.bfg[open] summary::after{content:' \25B4'}
+.bfg .bfseg{display:flex;background:var(--row);border:1px solid var(--border);border-radius:999px;padding:3px;max-width:220px;margin:10px auto}
+.bfg .bfseg button{flex:1;border:0;background:transparent;color:var(--text);padding:7px;border-radius:999px;cursor:pointer;font-weight:600;font-size:13px}
+.bfg .bfseg button.on{background:var(--blue);color:#fff}
+.bfg-img{width:100%;display:block}
+.bfg-img[hidden]{display:none}
+.bfg-note{padding:10px 12px;color:var(--muted);font-size:12px;line-height:1.5;margin:0;border-top:1px solid var(--border)}
 </style>
 </head>
 <body>
@@ -70,7 +82,7 @@ a{color:var(--blue)}
 <h2 class="grad">Step 1: Calculate Your Goal Weight</h2>
 <div class="seg" id="units"><button data-u="kg" class="on">kg</button><button data-u="lbs">lbs</button><button data-u="st">st/lb</button></div>
 <div class="field"><label for="w">Current Weight</label><div style="display:flex;gap:8px"><div class="inwrap" id="wstWrap" style="display:none;flex:1"><input id="wst" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g., 12"><span>st</span></div><div class="inwrap" style="flex:1"><input id="w" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g., 80"><span class="u">kg</span></div></div></div>
-<div class="field"><label for="bf">Your estimated current body fat % <a href="https://drive.google.com/file/d/1z4WNNx8e1oM2lZRT7ZsRaeq0fIBDKcst/view?usp=sharing" target="_blank" rel="noopener" style="font-size:13px">Body fat % image guide</a></label><div class="inwrap"><input id="bf" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g., 25"><span>%</span></div></div>
+<div class="field"><label for="bf">Your estimated current body fat %</label><div class="inwrap"><input id="bf" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g., 25"><span>%</span></div><details class="bfg"><summary>&#128247; Visual guide (approximate illustration)</summary><div class="bfseg"><button type="button" class="on" data-bfg="w">Women</button><button type="button" data-bfg="m">Men</button></div><img class="bfg-img" data-bfg-img="w" src="bodyfat-women.jpg" alt="Illustrative female body-fat guide: one AI-generated woman across eight levels marked 14% to 36%"><img class="bfg-img" data-bfg-img="m" src="bodyfat-men.jpg" alt="Illustrative male body-fat guide: one AI-generated man across eight levels marked 7% to 28%" hidden><p class="bfg-note">AI-generated illustration: an approximate visual reference only. Panels are concepts, not measured people, and appearance is not a reliable measure of body fat. Levels loosely follow common fitness categories (ACE): women athletic ~14-20%, fit ~21-24%, average ~25-31%; men athletic ~6-13%, fit ~14-17%, average ~18-24%. Every measurement method only estimates body fat, and methods often disagree.</p></details></div>
 <div class="field"><label for="gbf">Your Goal Body Fat %</label><div class="inwrap"><input id="gbf" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g., 15"><span>%</span></div></div>
 <div class="btns"><button class="btn" id="calcGoal">Calculate Goal Weight</button><button class="btn sec" id="reset">Reset</button></div>
 <div id="goalErr"></div><div id="goalOut"></div>
@@ -358,5 +370,10 @@ render();
  if(web){['guideLink','advLink'].forEach(function(id){var a=document.getElementById(id);if(a)a.removeAttribute('target');});}
  if(web&&'serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
 }catch(e){}})();
+</script>
+
+<script>
+/* Visual body-fat guide toggle */
+document.querySelectorAll('.bfg [data-bfg]').forEach(function(b){b.addEventListener('click',function(){var d=b.closest('.bfg');d.querySelectorAll('[data-bfg]').forEach(function(x){x.classList.toggle('on',x===b)});d.querySelectorAll('.bfg-img').forEach(function(i){i.hidden=i.getAttribute('data-bfg-img')!==b.getAttribute('data-bfg')});});});
 </script>
 </body></html>
