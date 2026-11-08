@@ -87,7 +87,7 @@ a{color:#0b5fff}
 <div class="gcols">
 <div class="gbox"><h3>1 · Goal weight <small>(Step 1)</small></h3>
 <ol><li>Pick your unit: <b>kg</b>, <b>lbs</b> or <b>st/lb</b> (stones + pounds, 1 st = 14 lb).</li>
-<li>Enter current weight, your <b>estimated body fat %</b> (use the image guide link in the app) and your <b>goal body fat %</b>.</li>
+<li>Enter current weight, your <b>estimated body fat %</b> (tap the visual guide under the field in the app) and your <b>goal body fat %</b>.</li>
 <li>Results appear as you type (or tap <b>Calculate</b>): goal weight, fat to lose and a time estimate.</li></ol>
 <p class="eq">Lean mass = weight × (1 − BF%)<br>Goal weight = lean mass ÷ (1 − goal BF%)</p>
 <p class="ex">Example: 80 kg at 25% → 15% gives <b>70.6 kg</b> (lose 9.4 kg).</p>
@@ -155,5 +155,10 @@ document.querySelectorAll('#themeSeg button').forEach(function(b){b.onclick=func
 setTheme(themePref);
 document.querySelectorAll('.dtab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.dtab').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.dpane').forEach(p=>p.hidden=p.id!=='d-'+b.dataset.t);});
 document.querySelectorAll('.copy').forEach(b=>b.onclick=async()=>{const t=document.getElementById(b.dataset.c).textContent;try{await navigator.clipboard.writeText(t)}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}b.textContent='Copied ✓';setTimeout(()=>b.textContent='Copy address',1600);});
+</script>
+
+<script>
+/* Visual body-fat guide toggle */
+document.querySelectorAll('.bfg [data-bfg]').forEach(function(b){b.addEventListener('click',function(){var d=b.closest('.bfg');d.querySelectorAll('[data-bfg]').forEach(function(x){x.classList.toggle('on',x===b)});d.querySelectorAll('.bfg-img').forEach(function(i){i.hidden=i.getAttribute('data-bfg-img')!==b.getAttribute('data-bfg')});});});
 </script>
 </body></html>
