@@ -132,7 +132,7 @@ a{color:var(--blue)}
 
 <section id="reportSec">
 <h2 class="grad">Save PDF / Share &amp; History</h2>
-<p class="sub" style="font-size:15px">Everything stays on this device. No account, no server, no tracking.</p>
+<p class="sub" style="font-size:15px">Calculator entries stay on this device. No calculator account is required.</p>
 <div class="btns"><button class="btn" id="pdfBtn">Save PDF / Share</button><button class="btn sec" id="printBtn">Print</button></div>
 <div id="pdfMsg" class="n" style="color:var(--muted);font-size:13px;margin-top:8px"></div>
 <p style="font-size:14px;margin:14px 0 6px">Your personal code: <strong id="pcode"></strong> <span style="color:var(--muted);font-size:13px">(stored only on this device, printed on your PDF)</span></p>
@@ -342,7 +342,7 @@ function lines(){var d=data(),h=hist();var L=[['Goal Weight Calculator - Persona
  ['Current weight: '+d.weight,11],['Current body fat: '+d.bf+'%    Goal body fat: '+d.gbf+'%',11],['Sex: '+d.sex+'    Height: '+d.height+'    Age: '+d.age+'    Activity: '+d.act,11],['',8],['RESULTS',12],
  ['Goal weight: '+d.goal,11],['Maintenance (TDEE): '+d.tdee,11],['Daily calorie target: '+d.target,11],['Weekly loss rate: '+d.rate,11],['Time to goal: '+d.time+'  '+d.eta,11],['Daily protein: '+d.protein,11]];
  if(h.length){L.push(['',8],['RECENT HISTORY',12]);h.slice(-8).reverse().forEach(x=>L.push([fd(x.date)+':  '+x.weight+',  BF '+x.bf+'% -> '+x.gbf+'%,  goal '+x.goal,10]));}
- L.push(['',8],['Estimates only, not medical advice. Generated on-device; no data was sent anywhere.',9],['Made by @ChewieWins',12]);return L;}
+ L.push(['',8],['Estimates only, not medical advice. Calculator entries processed on this device.',9],['Made by @ChewieWins',12]);return L;}
 function ascii(t){return String(t).replace(/[–—]/g,'-').replace(/[→]/g,'->').replace(/[≈~]/g,'~').replace(/[’‘]/g,"'").replace(/[“”]/g,'"').replace(/·/g,'-').replace(/[^\x20-\x7e]/g,'').replace(/([\\()])/g,'\\$1');}
 function makePdf(){var y=800,ops='BT\n';lines().forEach(function(l){y-=l[1]+7;ops+='/F'+(l[1]>=12?'2':'1')+' '+l[1]+' Tf 1 0 0 1 50 '+y+' Tm ('+ascii(l[0])+') Tj\n';});ops+='ET';
  var o=['<< /Type /Catalog /Pages 2 0 R >>','<< /Type /Pages /Kids [3 0 R] /Count 1 >>','<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>',
