@@ -1,5 +1,5 @@
 /* Goal Weight Calculator service worker: cache-first, versioned. Bump VERSION on each release. */
-var VERSION = 'v3';
+var VERSION = 'v4';
 var CACHE = 'goal-weight-' + VERSION;
 var ASSETS = ['./', 'index.html', 'advanced.html', 'guide.html', 'privacy.html',
   'manifest.webmanifest', 'bodyfat-women.jpg', 'bodyfat-men.jpg', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png'];
