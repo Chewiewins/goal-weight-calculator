@@ -1,6 +1,6 @@
 # Goal Weight Calculator
 
-Goal weight and adjustable calorie-deficit calculator, installable as a PWA. Everything runs on-device; no data is collected.
+Goal weight and adjustable calorie-deficit calculator, installable as a PWA. Calculator entries stay on this device. No calculator account is required.
 
 Live: https://chewiewins.github.io/goal-weight-calculator/
 
